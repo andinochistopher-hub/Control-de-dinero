@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Financiero - Colegio Privado</title>
+    <style>
+        :root {
+            --primary: #3a86ff;
+            --secondary: #8338ec;
+            --accent: #ff006e;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #28a745;
+            --info: #17a2b8;
+            --warning: #ffc107;
+            --background: #f5f7fa;
+            --card-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            --hover-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            position: relative;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        header:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: translateX(5px);
+        }
+
+        .logo img {
+            height: 50px;
+            margin-right: 15px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover img {
+            transform: rotate(-5deg) scale(1.05);
+        }
+
+        .logo-text h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-text p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .user-profile:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .user-profile:hover img {
+            transform: scale(1.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-profile span {
+            font-weight: 500;
+        }
+
+        main {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.8rem;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .card.income::before { background: var(--success); }
+        .card.expenses::before { background: var(--accent); }
+        .card.balance::before { background: var(--primary); }
+
+        .card:hover::before { width: 8px; }
+        .card:hover { transform: translateY(-8px); box-shadow: var(--hover-shadow); }
+
+        .card h3 { font-size: 1.1rem; color: var(--secondary); margin-bottom: 0.8rem; }
+        .card .amount { font-size: 2.2rem; font-weight: 700; margin-bottom: 0.8rem; letter-spacing: -1px; }
+
+        .card.income .amount { color: var(--success); }
+        .card.expenses .amount { color: var(--accent); }
+        .card.balance .amount { color: var(--primary); }
+
+        .card .trend { display: flex; align-items: center; font-size: 0.9rem; font-weight: 500; }
+        .card .trend.up { color: var(--success); }
+        .card .trend.down { color: var(--accent); }
+
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .action-btn {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: none;
+            outline: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-btn:hover { background: var(--primary); color: white; transform: translateY(-5px); box-shadow: var(--hover-shadow); }
+        .action-btn i { font-size: 2.5rem; margin-bottom: 1rem; display: block; color: var(--primary); transition: all 0.3s ease; }
+        .action-btn:hover i, .action-btn:hover h3, .action-btn:hover p { color: white; transform: scale(1.05); }
+
+        .recent-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.8rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .recent-section h2 {
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            color: var(--dark);
+            position: relative;
+            display: inline-block;
+        }
+
+        .recent-section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 3px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            overflow: hidden;
+            border-radius: 8px;
+        }
+
+        thead { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid #eee; }
+        th { font-weight: 500; }
+
+        tr:hover td { background: rgba(58, 134, 255, 0.05); transform: translateX(5px); }
+
+        .status { padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 500; display: inline-block; }
+        .status.paid { background: rgba(40, 167, 69, 0.1); color: var(--success); }
+        .status.pending { background: rgba(220, 53, 69, 0.1); color: var(--accent); }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: var(--secondary);
+            font-size: 0.9rem;
+            margin-top: 3rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+        }
+
+        /* Vistas / secciones */
+        .view-section { display: none; padding: 2rem; background: white; border-radius: 12px; box-shadow: var(--card-shadow); margin-bottom: 2.5rem; }
+        .view-section.active { display: block; }
+        .view-section h2 { margin-bottom: 1.5rem; font-size: 1.8rem; color: var(--dark); position: relative; display: inline-block; }
+        .view-section h2::after { content: ''; position: absolute; bottom: -8px; left: 0; width: 60px; height: 4px; background: var(--primary); border-radius: 3px; }
+
+        .back-button {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+        .back-button:hover { background: var(--primary); transform: translateY(-2px); }
+
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--dark); }
+        .form-group input[type="text"], .form-group input[type="number"], .form-group select {
+            width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem;
+        }
+        .form-group input:focus, .form-group select:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.2); }
+
+        .form-actions { margin-top: 1.5rem; display: flex; gap: 1rem; }
+        .form-actions button {
+            background: var(--success); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; cursor: pointer; font-size: 1rem;
+        }
+        .form-actions button:hover { background: #218838; transform: translateY(-2px); }
+        .form-actions button.cancel { background: var(--accent); }
+        .form-actions button.cancel:hover { background: #c82333; }
+
+        .invoice-options, .report-options { display: flex; flex-direction: column; gap: 1rem; }
+        .invoice-options button, .report-options button {
+            background: var(--primary); color: white; border: none; padding: 1rem 1.5rem; border-radius: 8px; cursor: pointer; font-size: 1.1rem;
+        }
+        .invoice-options button:hover, .report-options button:hover { background: var(--secondary); transform: translateY(-2px); }
+
+        /* Modal sencillo */
+        .modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; z-index: 9999;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: white; width: min(900px, 95vw); max-height: 90vh; overflow: auto; border-radius: 12px; box-shadow: var(--hover-shadow); padding: 1.5rem;
+        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .close-btn { background: transparent; border: none; font-size: 1.5rem; cursor: pointer; }
+
+        /* Tabla de ítems de factura */
+        .items-table { width: 100%; border-collapse: collapse; margin-top: .5rem; }
+        .items-table th, .items-table td { border-bottom: 1px solid #eee; padding: .6rem; }
+        .items-actions { display: flex; gap: .5rem; margin-top: .5rem; }
+        .small-btn { padding: .5rem .8rem; border-radius: 6px; border: none; cursor: pointer; }
+        .small-btn.add { background: var(--success); color: white; }
+        .small-btn.del { background: var(--accent); color: white; }
+
+        /* Contenedor oculto para PDF */
+        #pdfContainer { position: fixed; left: -99999px; top: -99999px; width: 794px; background: white; padding: 24px; }
+        #pdfContainer h1, #pdfContainer h2, #pdfContainer h3 { margin: .4rem 0; }
+        .pdf-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: .5rem; margin-bottom: .5rem; }
+        .pdf-summary { margin-top: 1rem; display: grid; grid-template-columns: repeat(3,1fr); gap: .5rem; }
+        .totals { margin-top: .8rem; display: grid; grid-template-columns: 1fr auto; gap: .2rem; max-width: 300px; margin-left: auto; }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .summary-cards { grid-template-columns: repeat(2, 1fr); }
+            .actions { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            header { flex-direction: column; text-align: center; padding: 1.2rem; }
+            .logo { margin-bottom: 1rem; justify-content: center; }
+            .user-profile { margin-top: 1rem; justify-content: center; width: 100%; }
+            main { padding: 1.2rem; }
+            .summary-cards, .actions { grid-template-columns: 1fr; }
+            table { display: block; overflow-x: auto; }
+        }
+        @media (max-width: 576px) {
+            .card { padding: 1.5rem; }
+            .action-btn { padding: 1.5rem 1rem; }
+            th, td { padding: 0.75rem; font-size: 0.9rem; }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--secondary); }
+    </style>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Librería para convertir HTML a PDF (habilitada) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="https://static.wixstatic.com/media/d851a1_9a1a1fb3e1884c569f76676eb233e734~mv2.png" alt="Logo de Instituto Privado Comayagua">
+            <div class="logo-text">
+                <h1>Instituto Privado Comayagua</h1>
+                <p>Sistema de Control Financiero</p>
+            </div>
+        </div>
+        <div class="user-profile">
+            <img src="https://placehold.co/80x80/e6e6e6/3a86ff?text=Admin" alt="Perfil">
+            <span>Administrador</span>
+        </div>
+    </header>
+
+    <main>
+        <!-- Dashboard -->
+        <section id="dashboardView" class="view-section active">
+            <div class="summary-cards">
+                <div class="card income">
+                    <h3>Ingresos Mensuales</h3>
+                    <div class="amount" id="monthlyIncome">L.125,450</div>
+                    <div class="trend up"><i class="fas fa-arrow-up"></i> <span id="incomeTrend">12%</span> vs mes anterior</div>
+                </div>
+                <div class="card expenses">
+                    <h3>Gastos Mensuales</h3>
+                    <div class="amount" id="monthlyExpenses">L.87,210</div>
+                    <div class="trend down"><i class="fas fa-arrow-down"></i> <span id="expensesTrend">5%</span> vs mes anterior</div>
+                </div>
+                <div class="card balance">
+                    <h3>Balance Actual</h3>
+                    <div class="amount" id="currentBalance">L.38,240</div>
+                    <div class="trend up"><i class="fas fa-arrow-up"></i> <span id="balanceTrend">8%</span> vs mes anterior</div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <div class="action-btn" onclick="showView('newPaymentView')">
+                    <i class="fas fa-plus-circle"></i>
+                    <h3>Nuevo Pago</h3>
+                    <p>Registrar un nuevo pago</p>
+                </div>
+                <div class="action-btn" onclick="showView('invoicesView')">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <h3>Facturas</h3>
+                    <p>Gestionar facturas</p>
+                </div>
+                <div class="action-btn" onclick="showView('reportsView')">
+                    <i class="fas fa-chart-bar"></i>
+                    <h3>Reportes</h3>
+                    <p>Generar reportes</p>
+                </div>
+            </div>
+
+            <div class="recent-section">
+                <h2>Últimas Transacciones</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Concepto</th>
+                            <th>Estudiante</th>
+                            <th>Curso</th>
+                            <th>Sección</th>
+                            <th>Monto</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Nuevo Pago -->
+        <section id="newPaymentView" class="view-section">
+            <button class="back-button" onclick="showView('dashboardView')"><i class="fas fa-arrow-left"></i> Volver al Menú</button>
+            <h2>Registrar Nuevo Pago</h2>
+            <form id="newPaymentForm">
+                <div class="form-group">
+                    <label for="paymentConcept">Concepto:</label>
+                    <input type="text" id="paymentConcept" required>
+                </div>
+                <div class="form-group">
+                    <label for="paymentStudent">Estudiante:</label>
+                    <input type="text" id="paymentStudent" required>
+                </div>
+                <div class="form-group">
+                    <label for="paymentCourse">Curso:</label>
+                    <input type="text" id="paymentCourse" required>
+                </div>
+                <div class="form-group">
+                    <label for="paymentSection">Sección:</label>
+                    <input type="text" id="paymentSection" required>
+                </div>
+                <div class="form-group">
+                    <label for="paymentAmount">Monto:</label>
+                    <input type="number" id="paymentAmount" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="paymentStatus">Estado:</label>
+                    <select id="paymentStatus" required>
+                        <option value="Pagado">Pagado</option>
+                        <option value="Pendiente">Pendiente</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit"><i class="fas fa-check-circle"></i> Registrar Pago</button>
+                    <button type="button" class="cancel" onclick="showView('dashboardView')"><i class="fas fa-times-circle"></i> Cancelar</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Facturas -->
+        <section id="invoicesView" class="view-section">
+            <button class="back-button" onclick="showView('dashboardView')"><i class="fas fa-arrow-left"></i> Volver al Menú</button>
+            <h2>Gestión de Facturas</h2>
+            <div class="invoice-options">
+                <button onclick="createInvoice()"><i class="fas fa-file-alt"></i> Crear Nueva Factura</button>
+                <button onclick="printExistingInvoice()"><i class="fas fa-print"></i> Imprimir Factura Existente (PDF)</button>
+            </div>
+
+            <!-- Listado de facturas existentes -->
+            <div style="margin-top:1.2rem;">
+                <h3 style="margin-bottom:.6rem;">Facturas guardadas</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Fecha</th>
+                            <th>Cliente</th>
+                            <th>Total</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="invoicesTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Reportes -->
+        <section id="reportsView" class="view-section">
+            <button class="back-button" onclick="showView('dashboardView')"><i class="fas fa-arrow-left"></i> Volver al Menú</button>
+            <h2>Generar Reportes</h2>
+            <div class="report-options">
+                <button onclick="generateReport('Semanal')"><i class="fas fa-calendar-week"></i> Reporte Semanal (PDF)</button>
+                <button onclick="generateReport('Mensual')"><i class="fas fa-calendar-alt"></i> Reporte Mensual (PDF)</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Sistema de Control Financiero - Instituto Privado Comayagua &copy; 2025</p>
+    </footer>
+
+    <!-- Modal: Crear Factura -->
+    <div id="invoiceModal" class="modal" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Nueva Factura</h3>
+                <button class="close-btn" onclick="closeInvoiceModal()">&times;</button>
+            </div>
+
+            <div class="form-group">
+                <label for="invCustomer">Cliente / Estudiante</label>
+                <input type="text" id="invCustomer" placeholder="Nombre del cliente" required>
+            </div>
+            <div class="form-group">
+                <label for="invId">Número de Factura</label>
+                <input type="text" id="invId" placeholder="Ej: FAC-0001" required>
+            </div>
+            <div class="form-group">
+                <label for="invDate">Fecha</label>
+                <input type="text" id="invDate" value="" required>
+            </div>
+
+            <div class="form-group">
+                <label>Ítems</label>
+                <table class="items-table" id="itemsTable">
+                    <thead>
+                        <tr>
+                            <th>Descripción</th>
+                            <th>Cant.</th>
+                            <th>Precio</th>
+                            <th>Subtotal</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemsTbody"></tbody>
+                </table>
+                <div class="items-actions">
+                    <button class="small-btn add" onclick="addItemRow()">Añadir Ítem</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="invTax">Impuesto (%)</label>
+                <input type="number" id="invTax" value="15" step="0.01">
+            </div>
+
+            <div class="form-actions">
+                <button type="button" onclick="saveInvoice()"><i class="fas fa-save"></i> Guardar Factura</button>
+                <button type="button" onclick="saveAndPrintInvoice()"><i class="fas fa-file-pdf"></i> Guardar e Imprimir PDF</button>
+                <button type="button" class="cancel" onclick="closeInvoiceModal()"><i class="fas fa-times"></i> Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Seleccionar Factura para Imprimir -->
+    <div id="selectInvoiceModal" class="modal" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Imprimir Factura Existente</h3>
+                <button class="close-btn" onclick="closeSelectInvoiceModal()">&times;</button>
+            </div>
+            <div class="form-group">
+                <label for="selectInvoice">Seleccione una factura</label>
+                <select id="selectInvoice" style="width:100%; padding:.7rem; border:1px solid #ddd; border-radius:6px;"></select>
+            </div>
+            <div class="form-actions">
+                <button type="button" onclick="printSelectedInvoice()"><i class="fas fa-print"></i> Imprimir PDF</button>
+                <button type="button" class="cancel" onclick="closeSelectInvoiceModal()"><i class="fas fa-times"></i> Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenedor oculto para renderizar PDFs -->
+    <div id="pdfContainer"></div>
+
+    <script>
+        //  Datos iniciales / LocalStorage 
+        let financialData = {
+            monthlyIncome: 125450,
+            monthlyExpenses: 87210,
+            currentBalance: 38240,
+            transactions: [
+                { date: '15/02/2025', concept: 'Mensualidad Junio',  student: 'Angely Yudith',    course: '11BTPI', section: '01', amount: 1200, status: 'Pagado' },
+                { date: '14/02/2025', concept: 'Mensualidad Julio',  student: 'Abner Rodriguez',  course: '11BCH',  section: '01', amount: 350,  status: 'Pagado' },
+                { date: '12/02/2025', concept: 'Materiales',         student: 'Daniel Agustin',   course: '10BTPI', section: '02', amount: 75,   status: 'Pendiente' },
+                { date: '10/02/2024', concept: 'Actividad extra',    student: 'Christopher Jafet',course: '9CB',    section: '01', amount: 50,   status: 'Pendiente' },
+                { date: '08/02/2024', concept: 'Uniforme',           student: 'Mareily Jackson',  course: '11BTPI', section: '02', amount: 120,  status: 'Pagado' },
+            ],
+            invoices: [] //  nuevo arreglo de facturas
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFinancialData();
+            updateUI();
+            document.getElementById('newPaymentForm').addEventListener('submit', handleNewPaymentSubmit);
+        });
+
+        function loadFinancialData() {
+            const stored = localStorage.getItem('financialData');
+            if (stored) {
+                financialData = JSON.parse(stored);
+                // Ajuste si no existía el arreglo de facturas
+                if (!Array.isArray(financialData.invoices)) financialData.invoices = [];
+            }
+        }
+
+        function saveFinancialData() {
+            localStorage.setItem('financialData', JSON.stringify(financialData));
+            renderInvoicesTable();
+        }
+
+        // UI 
+        function updateUI() {
+            document.getElementById('monthlyIncome').textContent = `L.${Number(financialData.monthlyIncome || 0).toLocaleString()}`;
+            document.getElementById('monthlyExpenses').textContent = `L.${Number(financialData.monthlyExpenses || 0).toLocaleString()}`;
+            document.getElementById('currentBalance').textContent = `L.${Number(financialData.currentBalance || 0).toLocaleString()}`;
+            document.getElementById('incomeTrend').textContent = '12%';
+            document.getElementById('expensesTrend').textContent = '5%';
+            document.getElementById('balanceTrend').textContent = '8%';
+            renderTransactions();
+            renderInvoicesTable();
+        }
+
+        function renderTransactions() {
+            const tbody = document.getElementById('transactionsTableBody');
+            tbody.innerHTML = '';
+            financialData.transactions.forEach(t => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${t.date}</td>
+                    <td>${t.concept}</td>
+                    <td>${t.student}</td>
+                    <td>${t.course}</td>
+                    <td>${t.section}</td>
+                    <td>L.${Number(t.amount).toLocaleString()}</td>
+                    <td><span class="status ${t.status === 'Pagado' ? 'paid' : 'pending'}">${t.status}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderInvoicesTable() {
+            const tbody = document.getElementById('invoicesTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            financialData.invoices.forEach(inv => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${inv.id}</td>
+                    <td>${inv.date}</td>
+                    <td>${inv.customer}</td>
+                    <td>L.${Number(inv.total).toLocaleString()}</td>
+                    <td><span class="status ${inv.status === 'Pagado' ? 'paid' : 'pending'}">${inv.status}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function showView(id) {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        // Pagos
+        function handleNewPaymentSubmit(e) {
+            e.preventDefault();
+            const concept = document.getElementById('paymentConcept').value.trim();
+            const student = document.getElementById('paymentStudent').value.trim();
+            const course  = document.getElementById('paymentCourse').value.trim();
+            const section = document.getElementById('paymentSection').value.trim();
+            const amount  = parseFloat(document.getElementById('paymentAmount').value);
+            const status  = document.getElementById('paymentStatus').value;
+
+            if (!concept || !student || !course || !section || isNaN(amount) || amount <= 0) {
+                alert("Por favor complete todos los campos con datos válidos.");
+                return;
+            }
+
+            const newT = { date: new Date().toLocaleDateString('es-ES'), concept, student, course, section, amount, status };
+            financialData.transactions.unshift(newT);
+            if (status === 'Pagado') {
+                financialData.monthlyIncome += amount;
+                financialData.currentBalance += amount;
+            }
+            saveFinancialData();
+            updateUI();
+            showNotification('Nuevo Pago Registrado');
+            e.target.reset();
+            showView('dashboardView');
+        }
+
+        //Facturas: Crear / Guardar / Imprimir
+        function createInvoice() {
+            openInvoiceModal();
+        }
+
+        function openInvoiceModal() {
+            document.getElementById('invoiceModal').classList.add('active');
+            // valores por defecto
+            document.getElementById('invCustomer').value = '';
+            document.getElementById('invId').value = `FAC-${String((financialData.invoices.length + 1)).padStart(4, '0')}`;
+            document.getElementById('invDate').value = new Date().toLocaleDateString('es-ES');
+            document.getElementById('invTax').value = 15;
+            document.getElementById('itemsTbody').innerHTML = '';
+            addItemRow(); // al menos una fila
+        }
+
+        function closeInvoiceModal() {
+            document.getElementById('invoiceModal').classList.remove('active');
+        }
+
+        function addItemRow() {
+            const tbody = document.getElementById('itemsTbody');
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="text" placeholder="Descripción" style="width:100%" required></td>
+                <td><input type="number" min="1" value="1" step="1" style="width:90px"></td>
+                <td><input type="number" min="0" value="0" step="0.01" style="width:120px"></td>
+                <td class="row-subtotal">L.0</td>
+                <td><button class="small-btn del" onclick="this.closest('tr').remove(); calcAllSubtotals()">X</button></td>
+            `;
+            tbody.appendChild(tr);
+            // recalcular al cambiar
+            tr.querySelectorAll('input').forEach(inp => {
+                inp.addEventListener('input', calcAllSubtotals);
+            });
+            calcAllSubtotals();
+        }
+
+        function calcAllSubtotals() {
+            document.querySelectorAll('#itemsTbody tr').forEach(tr => {
+                const qty = parseFloat(tr.children[1].querySelector('input').value) || 0;
+                const price = parseFloat(tr.children[2].querySelector('input').value) || 0;
+                const sub = qty * price;
+                tr.querySelector('.row-subtotal').textContent = `L.${sub.toLocaleString(undefined,{maximumFractionDigits:2})}`;
+            });
+        }
+
+        function collectInvoiceFromForm() {
+            const customer = document.getElementById('invCustomer').value.trim();
+            const id = document.getElementById('invId').value.trim();
+            const date = document.getElementById('invDate').value.trim();
+            const taxPercent = parseFloat(document.getElementById('invTax').value) || 0;
+
+            if (!customer || !id || !date) {
+                alert('Complete los datos de la factura.');
+                return null;
+            }
+
+            const items = [];
+            let subtotal = 0;
+            document.querySelectorAll('#itemsTbody tr').forEach(tr => {
+                const desc = tr.children[0].querySelector('input').value.trim();
+                const qty  = parseFloat(tr.children[1].querySelector('input').value) || 0;
+                const price= parseFloat(tr.children[2].querySelector('input').value) || 0;
+                if (!desc || qty<=0 || price<0) return;
+                const line = { description: desc, quantity: qty, price, subtotal: qty*price };
+                subtotal += line.subtotal;
+                items.push(line);
+            });
+
+            if (items.length === 0) {
+                alert('Agregue al menos un ítem válido.');
+                return null;
+            }
+
+            const tax = +(subtotal * (taxPercent/100)).toFixed(2);
+            const total = +(subtotal + tax).toFixed(2);
+
+            return {
+                id, date, customer,
+                items, subtotal: +subtotal.toFixed(2), taxPercent, tax, total,
+                status: 'Pagado' // puede ajustarse si se requiere
+            };
+        }
+
+        function saveInvoice() {
+            const invoice = collectInvoiceFromForm();
+            if (!invoice) return;
+
+            // Si ya existe mismo ID, reemplaza
+            const idx = financialData.invoices.findIndex(i => i.id === invoice.id);
+            if (idx >= 0) financialData.invoices[idx] = invoice;
+            else financialData.invoices.push(invoice);
+
+            saveFinancialData();
+            showNotification(`Factura ${invoice.id} guardada`);
+            closeInvoiceModal();
+            // actualizar selector en modal de impresión si estaba abierto
+            fillInvoiceSelect();
+        }
+
+        async function saveAndPrintInvoice() {
+            const invoice = collectInvoiceFromForm();
+            if (!invoice) return;
+            const idx = financialData.invoices.findIndex(i => i.id === invoice.id);
+            if (idx >= 0) financialData.invoices[idx] = invoice;
+            else financialData.invoices.push(invoice);
+            saveFinancialData();
+            await renderInvoiceToPDF(invoice, `factura_${invoice.id}.pdf`);
+            showNotification(`Factura ${invoice.id} guardada e impresa`);
+            closeInvoiceModal();
+        }
+
+        // Facturas: Imprimir existentes 
+        function printExistingInvoice() {
+            fillInvoiceSelect();
+            document.getElementById('selectInvoiceModal').classList.add('active');
+        }
+
+        function fillInvoiceSelect() {
+            const sel = document.getElementById('selectInvoice');
+            sel.innerHTML = '';
+            if (financialData.invoices.length === 0) {
+                const o = document.createElement('option');
+                o.text = 'No hay facturas guardadas';
+                o.value = '';
+                sel.appendChild(o);
+                return;
+            }
+            financialData.invoices.forEach(inv => {
+                const o = document.createElement('option');
+                o.value = inv.id;
+                o.text = `${inv.id} | ${inv.date} | ${inv.customer} | L.${Number(inv.total).toLocaleString()}`;
+                sel.appendChild(o);
+            });
+        }
+
+        async function printSelectedInvoice() {
+            const sel = document.getElementById('selectInvoice');
+            const id = sel.value;
+            if (!id) { alert('Seleccione una factura.'); return; }
+            const inv = financialData.invoices.find(i => i.id === id);
+            if (!inv) { alert('Factura no encontrada.'); return; }
+            await renderInvoiceToPDF(inv, `factura_${inv.id}.pdf`);
+            showNotification(`Factura ${inv.id} generada en PDF`);
+            closeSelectInvoiceModal();
+        }
+
+        function closeSelectInvoiceModal() {
+            document.getElementById('selectInvoiceModal').classList.remove('active');
+        }
+
+        //Reportes Semanal / Mensual (PDF)
+        function generateReport(type) {
+            const now = new Date();
+            let filtered = [];
+            if (type === 'Semanal') {
+                const from = new Date(now); from.setDate(now.getDate() - 6); 
+                filtered = financialData.transactions.filter(t => {
+                    const [d,m,y] = t.date.split('/').map(n=>parseInt(n,10));
+                    const dt = new Date(y, m-1, d);
+                    return dt >= from && dt <= now;
+                });
+            } else {
+                const month = now.getMonth();
+                const year = now.getFullYear();
+                filtered = financialData.transactions.filter(t => {
+                    const [d,m,y] = t.date.split('/').map(n=>parseInt(n,10));
+                    return (y === year && (m-1) === month);
+                });
+            }
+
+            const totalPagado = filtered.filter(t=>t.status==='Pagado').reduce((acc,t)=>acc+Number(t.amount||0),0);
+            const totalPend   = filtered.filter(t=>t.status!=='Pagado').reduce((acc,t)=>acc+Number(t.amount||0),0);
+
+            // Construir contenido y exportar
+            const container = document.getElementById('pdfContainer');
+            container.innerHTML = `
+                <div class="pdf-header">
+                    <div>
+                        <h2>Instituto Privado Comayagua</h2>
+                        <div><strong>Sistema de Control Financiero</strong></div>
+                    </div>
+                    <div style="text-align:right">
+                        <h2>Reporte ${type}</h2>
+                        <div>Generado: ${new Date().toLocaleDateString('es-ES')}</div>
+                    </div>
+                </div>
+
+                <div class="pdf-summary">
+                    <div><strong>Transacciones:</strong> ${filtered.length}</div>
+                    <div><strong>Total Pagado:</strong> L.${totalPagado.toLocaleString()}</div>
+                    <div><strong>Total Pendiente:</strong> L.${totalPend.toLocaleString()}</div>
+                </div>
+
+                <h3 style="margin-top:1rem;">Detalle de transacciones</h3>
+                <table style="width:100%; border-collapse:collapse;" border="1">
+                    <thead>
+                        <tr><th>Fecha</th><th>Concepto</th><th>Estudiante</th><th>Monto</th><th>Estado</th></tr>
+                    </thead>
+                    <tbody>
+                        ${filtered.map(t=>`
+                            <tr>
+                                <td>${t.date}</td>
+                                <td>${t.concept}</td>
+                                <td>${t.student}</td>
+                                <td>L.${Number(t.amount).toLocaleString()}</td>
+                                <td>${t.status}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            const fileName = `reporte_${type.toLowerCase()}_${new Date().toISOString().slice(0,10)}.pdf`;
+            html2pdf().from(container).set({
+                margin: 10,
+                filename: fileName,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            }).save().then(()=> showNotification(`Reporte ${type} generado`));
+        }
+
+        // ====== Render de factura a PDF ======
+        async function renderInvoiceToPDF(inv, filename='factura.pdf') {
+            const container = document.getElementById('pdfContainer');
+            const itemsRows = inv.items.map(it => `
+                <tr>
+                    <td>${it.description}</td>
+                    <td style="text-align:center">${it.quantity}</td>
+                    <td style="text-align:right">L.${Number(it.price).toLocaleString()}</td>
+                    <td style="text-align:right">L.${Number(it.subtotal).toLocaleString()}</td>
+                </tr>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="pdf-header">
+                    <div>
+                        <h2>Instituto Privado Comayagua</h2>
+                        <div>Rubro: Educación</div>
+                        <div>Tel: (XXX) XXX-XXXX</div>
+                    </div>
+                    <div style="text-align:right">
+                        <h2>FACTURA</h2>
+                        <div><strong>No.:</strong> ${inv.id}</div>
+                        <div><strong>Fecha:</strong> ${inv.date}</div>
+                    </div>
+                </div>
+
+                <div>
+                    <strong>Cliente / Estudiante:</strong> ${inv.customer}<br>
+                    <strong>Estado:</strong> ${inv.status}
+                </div>
+
+                <h3 style="margin-top:1rem;">Detalle</h3>
+                <table style="width:100%; border-collapse:collapse;" border="1">
+                    <thead>
+                        <tr>
+                            <th>Descripción</th>
+                            <th>Cantidad</th>
+                            <th>Precio</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${itemsRows}
+                    </tbody>
+                </table>
+
+                <div class="totals">
+                    <div>Subtotal</div><div> L.${Number(inv.subtotal).toLocaleString()}</div>
+                    <div>Impuesto (${inv.taxPercent}%)</div><div> L.${Number(inv.tax).toLocaleString()}</div>
+                    <div style="font-weight:700;">Total</div><div style="font-weight:700;"> L.${Number(inv.total).toLocaleString()}</div>
+                </div>
+
+                <p style="margin-top:1rem; font-size:.9rem; color:#555;">Gracias por su pago.</p>
+            `;
+
+            return html2pdf().from(container).set({
+                margin: 10,
+                filename,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            }).save();
+        }
+
+        // ====== Notificaciones ======
+        function showNotification(message) {
+            const n = document.createElement('div');
+            n.textContent = message;
+            n.style.cssText = `
+                position: fixed; bottom: 20px; right: 20px;
+                background: #4CAF50; color: white; padding: 12px 16px;
+                border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                z-index: 10000; opacity: 0; transform: translateY(10px);
+                transition: all .3s ease;
+            `;
+            document.body.appendChild(n);
+            requestAnimationFrame(()=>{ n.style.opacity = 1; n.style.transform = 'translateY(0)'; });
+            setTimeout(()=>{
+                n.style.opacity = 0; n.style.transform = 'translateY(10px)';
+                setTimeout(()=> n.remove(), 300);
+            }, 2400);
+        }
+
+        // ====== Helpers ======
+        function closeSelectInvoiceModal(){ document.getElementById('selectInvoiceModal').classList.remove('active'); }
+
+        // Efecto hover filas (aplicado al render)
+        document.addEventListener('mouseover', (e)=>{
+            const tr = e.target.closest('tbody tr');
+            if (tr) tr.style.boxShadow = '0 4px 15px rgba(0,0,0,0.08)';
+        });
+        document.addEventListener('mouseout', (e)=>{
+            const tr = e.target.closest('tbody tr');
+            if (tr) tr.style.boxShadow = 'none';
+        });
+    </script>
+</body>
+</html>
