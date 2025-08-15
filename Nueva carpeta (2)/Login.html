@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Control Financiero</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Variables CSS para consistencia con el otro HTML */
+        :root {
+            --primary: #3a86ff;
+            --secondary: #8338ec;
+            --accent: #ff006e;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #28a745;
+            --info: #17a2b8;
+            --warning: #ffc107;
+            --background: #f5f7fa;
+            --card-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            --hover-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Reset básico y fuente */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        /* Estilos del cuerpo con imagen de fondo y superposición */
+        body {
+            background-image: url('https://static.wixstatic.com/media/e3bd70_9c52e10200fa48febd1c3c81f75457c4~mv2.jpg/v1/fill/w_1920,h_1080,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/e3bd70_9c52e10200fa48febd1c3c81f75457c4~mv2.jpg'); /* URL de la imagen de fondo de mayor calidad */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--dark);
+            overflow: hidden;
+            position: relative; /* Necesario para el pseudo-elemento */
+        }
+
+        /* Superposición oscura para mejorar la legibilidad del texto */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Capa oscura semi-transparente */
+            z-index: 0; /* Asegura que esté detrás del contenido */
+        }
+
+        /* Contenedor principal para el formulario (ya no es flexbox para múltiples) */
+        .container {
+            position: relative;
+            z-index: 1; /* Asegura que esté sobre la superposición */
+            width: 100%;
+            display: flex; /* Mantener flex para centrar el único elemento */
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Estilos base para el contenedor del formulario de login */
+        .login-container {
+            background: rgba(255, 255, 255, 0.95); /* Fondo semi-transparente */
+            padding: 3rem 2.5rem;
+            border-radius: 15px;
+            box-shadow: var(--hover-shadow);
+            text-align: center;
+            width: 100%;
+            max-width: 450px; /* Ancho máximo para el formulario de login */
+            animation: fadeInScale 0.6s ease-out; /* Animación de entrada */
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px); /* Efecto de desenfoque en el fondo */
+            margin: auto; /* Centra el contenedor horizontalmente */
+        }
+
+        /* Burbujas decorativas para el contenedor */
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            width: 150px;
+            height: 150px;
+            background: rgba(58, 134, 255, 0.1);
+            border-radius: 50%;
+            z-index: 0;
+            animation: bubble1 10s infinite ease-in-out;
+        }
+
+        .login-container::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            right: -30px;
+            width: 100px;
+            height: 100px;
+            background: rgba(131, 56, 236, 0.1);
+            border-radius: 50%;
+            z-index: 0;
+            animation: bubble2 12s infinite ease-in-out;
+        }
+
+        /* Animaciones */
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes bubble1 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(20px, 30px); }
+        }
+
+        @keyframes bubble2 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-20px, -30px); }
+        }
+
+        /* Estilos de los títulos */
+        h2 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Estilos del logo */
+        .logo-login {
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-login img {
+            height: 70px;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+        }
+
+        /* Estilos para grupos de entrada (label, input, icon) */
+        .input-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+            position: relative;
+            z-index: 1;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--secondary);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            color: var(--dark);
+            transition: all 0.3s ease;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+            background-color: #fff; /* Asegura fondo blanco para select */
+            -webkit-appearance: none; /* Elimina estilos por defecto en WebKit */
+            -moz-appearance: none; /* Elimina estilos por defecto en Firefox */
+            appearance: none; /* Elimina estilos por defecto */
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.2);
+            outline: none;
+        }
+
+        .input-group .icon {
+            position: absolute;
+            right: 15px;
+            top: 65%; /* Ajuste para centrar verticalmente el icono */
+            transform: translateY(-50%);
+            color: #aaa;
+            transition: color 0.3s ease;
+            pointer-events: none; /* Permite clics a través del icono */
+        }
+
+        .input-group input:focus + .icon {
+            color: var(--primary);
+        }
+
+        /* Estilos para opciones (recordarme, olvidar contraseña) */
+        .options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .options .remember-me {
+            display: flex;
+            align-items: center;
+            color: var(--dark);
+        }
+
+        .options .remember-me input[type="checkbox"] {
+            margin-right: 8px;
+            accent-color: var(--primary); /* Color del checkbox */
+            width: 16px;
+            height: 16px;
+        }
+
+        .options a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            cursor: pointer; /* Indica que es clickeable */
+        }
+
+        .options a:hover {
+            color: var(--secondary);
+            text-decoration: underline;
+        }
+
+        /* Estilos de los botones generales */
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 1;
+            margin-top: 1rem; /* Espacio superior para separar de los inputs */
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, var(--secondary), var(--primary));
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #dc3545, #c82333);
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(45deg, #c82333, #dc3545);
+        }
+
+        /* Estilos para mensajes de error y éxito */
+        .message {
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            display: none; /* Oculto por defecto */
+            position: relative;
+            z-index: 1;
+            padding: 0.5rem;
+            border-radius: 5px;
+        }
+
+        .error-message {
+            color: var(--accent);
+            background-color: rgba(255, 0, 110, 0.1);
+        }
+
+        .success-message {
+            color: var(--success);
+            background-color: rgba(40, 167, 69, 0.1);
+        }
+
+        /* Botón flotante para añadir usuario */
+        .floating-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, var(--success), #5cb85c);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            z-index: 100; /* Asegura que esté por encima de todo */
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .floating-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, #5cb85c, var(--success));
+        }
+
+        /* Estilos para el Modal */
+        .modal {
+            display: none; /* Oculto por defecto */
+            position: fixed; /* Permanece en su lugar */
+            z-index: 101; /* Se superpone al contenido */
+            left: 0;
+            top: 0;
+            width: 100%; /* Ancho completo */
+            height: 100%; /* Alto completo */
+            overflow: auto; /* Habilitar scroll si es necesario */
+            background-color: rgba(0, 0, 0, 0.6); /* Fondo oscuro semi-transparente */
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto; /* Centrar vertical y horizontalmente */
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 500px; /* Ancho máximo del modal */
+            position: relative;
+            animation: fadeInScale 0.3s ease-out;
+            color: var(--dark);
+        }
+
+        .modal-content h3 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .modal-content .close-button {
+            color: #aaa;
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .modal-content .close-button:hover,
+        .modal-content .close-button:focus {
+            color: var(--accent);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal-content .form-section {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-content .form-section:last-of-type {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .modal-content .form-section h4 {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            text-align: left;
+        }
+
+        .user-list {
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 1rem;
+            background-color: var(--light);
+        }
+
+        .user-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .user-list li {
+            padding: 8px 0;
+            border-bottom: 1px dashed #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95rem;
+            color: var(--dark);
+        }
+
+        .user-list li:last-child {
+            border-bottom: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 500px) {
+            .login-container {
+                margin: 1rem; /* Margen en pantallas muy pequeñas */
+                padding: 2rem 1.5rem;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+
+            .logo-login img {
+                height: 60px;
+            }
+
+            .input-group input, .input-group select {
+                padding: 0.8rem 1rem;
+                font-size: 0.95rem;
+            }
+
+            .btn {
+                padding: 0.9rem;
+                font-size: 1rem;
+            }
+
+            .floating-btn {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+
+            .modal-content {
+                padding: 20px;
+                width: 95%;
+            }
+
+            .modal-content h3 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Contenedor del Formulario de Inicio de Sesión -->
+        <div class="login-container">
+            <div class="logo-login">
+                <img src="https://static.wixstatic.com/media/d851a1_9a1a1fb3e1884c569f76676eb233e734~mv2.png" alt="Logo de Instituto Privado Comayagua">
+            </div>
+            <h2>Iniciar Sesión</h2>
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="loginUsername">Usuario</label>
+                    <input type="text" id="loginUsername" name="loginUsername" placeholder="Ingrese su usuario" required>
+                    <i class="fas fa-user icon"></i>
+                </div>
+                <div class="input-group">
+                    <label for="loginPassword">Contraseña</label>
+                    <input type="password" id="loginPassword" name="loginPassword" placeholder="Ingrese su contraseña" required>
+                    <i class="fas fa-lock icon"></i>
+                </div>
+                <div class="options">
+                    <div class="remember-me">
+                        <input type="checkbox" id="rememberMe">
+                        <label for="rememberMe">Recordarme</label>
+                    </div>
+                    <a href="#" id="forgotPasswordLink">¿Olvidó su contraseña?</a>
+                </div>
+                <button type="submit" class="btn">Acceder</button>
+                <p class="message error-message" id="loginErrorMessage">Usuario o contraseña incorrectos.</p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Botón flotante para añadir/gestionar usuarios -->
+    <button class="floating-btn" id="openUserManagementBtn">
+        <i class="fas fa-user-cog"></i> Añadir/Gestionar Usuarios
+    </button>
+
+    <!-- Modal de Gestión de Usuarios -->
+    <div id="userManagementModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeUserManagementModal">&times;</span>
+            <h3>Gestión de Usuarios</h3>
+
+            <div id="adminCredentialsSection" class="form-section">
+                <h4>Credenciales de Administrador</h4>
+                <div class="input-group">
+                    <label for="adminUserMgmtUsername">Usuario Administrador</label>
+                    <input type="text" id="adminUserMgmtUsername" placeholder="Su usuario de administrador" required>
+                    <i class="fas fa-user-shield icon"></i>
+                </div>
+                <div class="input-group">
+                    <label for="adminUserMgmtPassword">Contraseña Administrador</label>
+                    <input type="password" id="adminUserMgmtPassword" placeholder="Su contraseña de administrador" required>
+                    <i class="fas fa-lock-open icon"></i>
+                </div>
+                <button type="button" id="verifyAdminBtn" class="btn">Verificar Credenciales</button>
+                <p class="message error-message" id="adminMgmtErrorMessage"></p>
+            </div>
+
+            <div id="userManagementOptions" style="display:none;">
+                <div class="form-section">
+                    <h4>Usuarios Actuales</h4>
+                    <div class="user-list" id="currentUserList">
+                        <!-- La lista de usuarios se generará aquí con JS -->
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h4>Opciones</h4>
+                    <button id="addUserBtn" class="btn" style="margin-bottom:1rem;">
+                        <i class="fas fa-user-plus"></i> Añadir Nuevo Usuario
+                    </button>
+                    <button id="deleteUserBtn" class="btn btn-danger">
+                        <i class="fas fa-user-minus"></i> Borrar Usuario Existente
+                    </button>
+                </div>
+            </div>
+
+            <div id="addUserSection" class="form-section" style="display:none;">
+                <button onclick="backToMainMenu()" class="btn" style="margin-bottom:1rem;">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </button>
+                <h4>Añadir Nuevo Usuario</h4>
+                <form id="addUserForm">
+                    <div class="input-group">
+                        <label for="newUsername">Nuevo Usuario</label>
+                        <input type="text" id="newUsername" placeholder="Nombre de usuario" required>
+                        <i class="fas fa-user-plus icon"></i>
+                    </div>
+                    <div class="input-group">
+                        <label for="newPassword">Nueva Contraseña</label>
+                        <input type="password" id="newPassword" placeholder="Contraseña para el nuevo usuario" required>
+                        <i class="fas fa-key icon"></i>
+                    </div>
+                    <button type="submit" class="btn">Añadir Usuario</button>
+                    <p class="message success-message" id="addUserSuccessMessage"></p>
+                    <p class="message error-message" id="addUserErrorMessage"></p>
+                </form>
+            </div>
+
+            <div id="deleteUserSection" class="form-section" style="display:none;">
+                <button onclick="backToMainMenu()" class="btn" style="margin-bottom:1rem;">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </button>
+                <h4>Borrar Usuario</h4>
+                <form id="deleteUserForm">
+                    <div class="input-group">
+                        <label for="deleteUsername">Usuario a Borrar</label>
+                        <input type="text" id="deleteUsername" placeholder="Nombre de usuario a borrar" required>
+                        <i class="fas fa-user-minus icon"></i>
+                    </div>
+                    <button type="submit" class="btn btn-danger">Borrar Usuario</button>
+                    <p class="message success-message" id="deleteUserSuccessMessage"></p>
+                    <p class="message error-message" id="deleteUserErrorMessage"></p>
+                </form>
+            </div>
+
+            <div class="form-section">
+                <h4>Usuarios Actuales</h4>
+                <div class="user-list" id="currentUserList">
+                    <!-- La lista de usuarios se generará aquí con JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Olvidó su Contraseña / Cambiar Contraseña -->
+    <div id="forgotPasswordModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeForgotPasswordModal">&times;</span>
+            <h3>Recuperar/Cambiar Contraseña</h3>
+
+            <div class="form-section" id="forgotPasswordAdminSection">
+                <h4>Credenciales de Administrador</h4>
+                <div class="input-group">
+                    <label for="adminForgotUsername">Usuario Administrador</label>
+                    <input type="text" id="adminForgotUsername" placeholder="Su usuario de administrador" required>
+                    <i class="fas fa-user-shield icon"></i>
+                </div>
+                <div class="input-group">
+                    <label for="adminForgotPass">Contraseña Administrador</label>
+                    <input type="password" id="adminForgotPass" placeholder="Su contraseña de administrador" required>
+                    <i class="fas fa-lock-open icon"></i>
+                </div>
+                <button type="button" class="btn" id="verifyAdminForgotPass">Verificar Credenciales</button>
+                <p class="message error-message" id="forgotPassAdminErrorMessage"></p>
+            </div>
+
+            <div class="form-section" id="changePasswordSection" style="display: none;">
+                <h4>Cambiar Contraseña de Usuario</h4>
+                <form id="changePasswordForm">
+                    <div class="input-group">
+                        <label for="userToChangePass">Seleccionar Usuario</label>
+                        <select id="userToChangePass" required>
+                            <!-- Opciones de usuario se cargarán aquí con JS -->
+                        </select>
+                        <i class="fas fa-user icon"></i>
+                    </div>
+                    <div class="input-group">
+                        <label for="newPassForUser">Nueva Contraseña</label>
+                        <input type="password" id="newPassForUser" placeholder="Nueva contraseña para el usuario" required>
+                        <i class="fas fa-key icon"></i>
+                    </div>
+                    <button type="submit" class="btn">Cambiar Contraseña</button>
+                    <p class="message success-message" id="changePassSuccessMessage"></p>
+                    <p class="message error-message" id="changePassErrorMessage"></p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        
+        const users = {
+            'AdminIPC': 'AdminIPCaño2025', // Usuario administrador principal
+            'usuario1': 'contraseña',
+            'usuario2': 'contraseña235'
+        };
+
+        // Credenciales del administrador para añadir/borrar/cambiar usuarios
+        const ADMIN_USERNAME = 'AdminIPC';
+        const ADMIN_PASSWORD = 'AdminIPCaño2025';
+
+        // --- Elementos del DOM ---
+        const loginForm = document.getElementById('loginForm');
+        const loginUsernameInput = document.getElementById('loginUsername');
+        const loginPasswordInput = document.getElementById('loginPassword');
+        const loginErrorMessage = document.getElementById('loginErrorMessage');
+
+        const openUserManagementBtn = document.getElementById('openUserManagementBtn');
+        const userManagementModal = document.getElementById('userManagementModal');
+        const closeUserManagementModal = document.getElementById('closeUserManagementModal');
+
+        const adminUserMgmtUsernameInput = document.getElementById('adminUserMgmtUsername');
+        const adminUserMgmtPasswordInput = document.getElementById('adminUserMgmtPassword');
+        const adminMgmtErrorMessage = document.getElementById('adminMgmtErrorMessage');
+
+        const addUserForm = document.getElementById('addUserForm');
+        const newUsernameInput = document.getElementById('newUsername');
+        const newPasswordInput = document.getElementById('newPassword');
+        const addUserSuccessMessage = document.getElementById('addUserSuccessMessage');
+        const addUserErrorMessage = document.getElementById('addUserErrorMessage');
+
+        const deleteUserForm = document.getElementById('deleteUserForm');
+        const deleteUsernameInput = document.getElementById('deleteUsername');
+        const deleteUserSuccessMessage = document.getElementById('deleteUserSuccessMessage');
+        const deleteUserErrorMessage = document.getElementById('deleteUserErrorMessage');
+
+        const currentUserList = document.getElementById('currentUserList');
+
+        const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+        const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+        const closeForgotPasswordModal = document.getElementById('closeForgotPasswordModal');
+
+        const forgotPasswordAdminSection = document.getElementById('forgotPasswordAdminSection');
+        const adminForgotUsernameInput = document.getElementById('adminForgotUsername');
+        const adminForgotPassInput = document.getElementById('adminForgotPass');
+        const verifyAdminForgotPassBtn = document.getElementById('verifyAdminForgotPass');
+        const forgotPassAdminErrorMessage = document.getElementById('forgotPassAdminErrorMessage');
+
+        const changePasswordSection = document.getElementById('changePasswordSection');
+        const changePasswordForm = document.getElementById('changePasswordForm');
+        const userToChangePassSelect = document.getElementById('userToChangePass');
+        const newPassForUserInput = document.getElementById('newPassForUser');
+        const changePassSuccessMessage = document.getElementById('changePassSuccessMessage');
+        const changePassErrorMessage = document.getElementById('changePassErrorMessage');
+
+        // --- Funciones Auxiliares ---
+        function showMessage(element, message, type) {
+            element.textContent = message;
+            element.className = `message ${type}-message`;
+            element.style.display = 'block';
+        }
+
+        function hideMessage(element) {
+            element.style.display = 'none';
+        }
+
+        function validateAdminCredentials(username, password, errorElement) {
+            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                hideMessage(errorElement);
+                return true;
+            } else {
+                showMessage(errorElement, 'Credenciales de administrador incorrectas."', 'error');
+                return false;
+            }
+        }
+
+        function updateUsersList() {
+            currentUserList.innerHTML = '';
+            const ul = document.createElement('ul');
+            for (const user in users) {
+                if (user !== ADMIN_USERNAME) { // No mostrar el admin en la lista de usuarios gestionables
+                    const li = document.createElement('li');
+                    li.textContent = user;
+                    ul.appendChild(li);
+                }
+            }
+            if (ul.children.length === 0) {
+                currentUserList.textContent = 'No hay usuarios registrados (excepto el administrador).';
+            } else {
+                currentUserList.appendChild(ul);
+            }
+        }
+
+        function populateUserSelect() {
+            userToChangePassSelect.innerHTML = '<option value="">Seleccione un usuario</option>';
+            for (const user in users) {
+                if (user !== ADMIN_USERNAME) {
+                    const option = document.createElement('option');
+                    option.value = user;
+                    option.textContent = user;
+                    userToChangePassSelect.appendChild(option);
+                }
+            }
+        }
+
+        //Lógica del Formulario de Inicio de Sesión
+        loginForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            hideMessage(loginErrorMessage);
+
+            const username = loginUsernameInput.value;
+            const password = loginPasswordInput.value;
+
+            if (users[username] && users[username] === password) {
+                alert('¡Inicio de sesión exitoso!');
+                window.location.href = 'https://www.youware.com/project/menucontrolfinanciero-89qinnbb9v?enter_from=share&invite_code=CDAZTCTAYW';
+            } else {
+                showMessage(loginErrorMessage, 'Usuario o contraseña incorrectos.', 'error');
+                loginUsernameInput.value = '';
+                loginPasswordInput.value = '';
+                loginUsernameInput.focus();
+            }
+        });
+
+        // Lógica del Modal de Gestión de Usuarios
+        openUserManagementBtn.addEventListener('click', function() {
+            userManagementModal.style.display = 'flex';
+            updateUsersList();
+            // Limpiar campos y mensajes al abrir
+            adminUserMgmtUsernameInput.value = '';
+            adminUserMgmtPasswordInput.value = '';
+            newUsernameInput.value = '';
+            newPasswordInput.value = '';
+            deleteUsernameInput.value = '';
+            hideMessage(adminMgmtErrorMessage);
+            hideMessage(addUserSuccessMessage);
+            hideMessage(addUserErrorMessage);
+            hideMessage(deleteUserSuccessMessage);
+            hideMessage(deleteUserErrorMessage);
+        });
+
+        closeUserManagementModal.addEventListener('click', function() {
+            userManagementModal.style.display = 'none';
+        });
+
+        // Cerrar modal al hacer clic fuera del contenido
+        window.addEventListener('click', function(event) {
+            if (event.target === userManagementModal) {
+                userManagementModal.style.display = 'none';
+            }
+            if (event.target === forgotPasswordModal) {
+                forgotPasswordModal.style.display = 'none';
+            }
+        });
+
+        // Button para verificar las credenciales del Admin
+        document.getElementById('verifyAdminBtn').addEventListener('click', function() {
+            const adminUsername = adminUserMgmtUsernameInput.value;
+            const adminPassword = adminUserMgmtPasswordInput.value;
+            
+            if (validateAdminCredentials(adminUsername, adminPassword, adminMgmtErrorMessage)) {
+                document.getElementById('adminCredentialsSection').style.display = 'none';
+                document.getElementById('userManagementOptions').style.display = 'block';
+                updateUsersList();
+            }
+        });
+
+        
+        document.getElementById('addUserBtn').addEventListener('click', function() {
+            document.getElementById('userManagementOptions').style.display = 'none';
+            document.getElementById('addUserSection').style.display = 'block';
+        });
+
+     
+        document.getElementById('deleteUserBtn').addEventListener('click', function() {
+            document.getElementById('userManagementOptions').style.display = 'none';
+            document.getElementById('deleteUserSection').style.display = 'block';
+        });
+
+        
+        function backToMainMenu() {
+            document.getElementById('addUserSection').style.display = 'none';
+            document.getElementById('deleteUserSection').style.display = 'none';
+            document.getElementById('userManagementOptions').style.display = 'block';
+            updateUsersList();
+        }
+
+        addUserForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            hideMessage(addUserSuccessMessage);
+            hideMessage(addUserErrorMessage);
+
+            const newUsername = newUsernameInput.value;
+            const newPassword = newPasswordInput.value;
+
+            if (users[newUsername]) {
+                showMessage(addUserErrorMessage, 'El nombre de usuario ya existe. Por favor, elija otro.', 'error');
+            } else {
+                users[newUsername] = newPassword;
+                showMessage(addUserSuccessMessage, `Usuario '${newUsername}' añadido exitosamente.`, 'success');
+                newUsernameInput.value = '';
+                newPasswordInput.value = '';
+                updateUsersList();
+                backToMainMenu();
+            }
+        });
+
+        deleteUserForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            hideMessage(deleteUserSuccessMessage);
+            hideMessage(deleteUserErrorMessage);
+
+            const adminUsername = adminUserMgmtUsernameInput.value;
+            const adminPassword = adminUserMgmtPasswordInput.value;
+
+            if (!validateAdminCredentials(adminUsername, adminPassword, adminMgmtErrorMessage)) {
+                return;
+            }
+
+            const usernameToDelete = deleteUsernameInput.value;
+
+            if (usernameToDelete === ADMIN_USERNAME) {
+                showMessage(deleteUserErrorMessage, 'No se puede borrar el usuario administrador principal.', 'error');
+            } else if (users[usernameToDelete]) {
+                delete users[usernameToDelete];
+                showMessage(deleteUserSuccessMessage, `Usuario '${usernameToDelete}' borrado exitosamente.`, 'success');
+                deleteUsernameInput.value = '';
+                updateUsersList();
+            } else {
+                showMessage(deleteUserErrorMessage, 'El usuario a borrar no existe.', 'error');
+            }
+        });
+
+        // Lógica del Modal de Olvidó su Contraseña / Cambiar Contraseña
+        forgotPasswordLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            forgotPasswordModal.style.display = 'flex';
+            // Resetear el modal
+            forgotPasswordAdminSection.style.display = 'block';
+            changePasswordSection.style.display = 'none';
+            adminForgotUsernameInput.value = '';
+            adminForgotPassInput.value = '';
+            hideMessage(forgotPassAdminErrorMessage);
+            hideMessage(changePassSuccessMessage);
+            hideMessage(changePassErrorMessage);
+        });
+
+        closeForgotPasswordModal.addEventListener('click', function() {
+            forgotPasswordModal.style.display = 'none';
+        });
+
+        verifyAdminForgotPassBtn.addEventListener('click', function() {
+            hideMessage(forgotPassAdminErrorMessage);
+            const adminUsername = adminForgotUsernameInput.value;
+            const adminPassword = adminForgotPassInput.value;
+
+            if (validateAdminCredentials(adminUsername, adminPassword, forgotPassAdminErrorMessage)) {
+                forgotPasswordAdminSection.style.display = 'none';
+                changePasswordSection.style.display = 'block';
+                populateUserSelect(); // Cargar usuarios en el select
+            }
+        });
+
+        changePasswordForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            hideMessage(changePassSuccessMessage);
+            hideMessage(changePassErrorMessage);
+
+            const userToChange = userToChangePassSelect.value;
+            const newPassword = newPassForUserInput.value;
+
+            if (!userToChange) {
+                showMessage(changePassErrorMessage, 'Por favor, seleccione un usuario.', 'error');
+                return;
+            }
+
+            if (userToChange === ADMIN_USERNAME) {
+                showMessage(changePassErrorMessage, 'No se puede cambiar la contraseña del usuario administrador principal desde aquí.', 'error');
+                return;
+            }
+
+            if (users[userToChange]) {
+                users[userToChange] = newPassword;
+                showMessage(changePassSuccessMessage, `Contraseña de '${userToChange}' cambiada exitosamente.`, 'success');
+                newPassForUserInput.value = '';
+                // Opcional: cerrar modal o resetear después de éxito
+                // setTimeout(() => forgotPasswordModal.style.display = 'none', 2000);
+            } else {
+                showMessage(changePassErrorMessage, 'El usuario seleccionado no existe.', 'error');
+            }
+        });
+    </script>
+</body>
+</html>
